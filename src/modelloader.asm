@@ -16,10 +16,10 @@ checkfile:
     sb          v1, 0x0(t7)
     srl         v0, v0, 0x4
     addiu       t7, t7, -1
-    b           @@loop
+    j           @@loop
     addiu       t6, t6, -1
 @@end:
-    b           openfile
+    j           openfile
     nop
 
 closeopenfile:
@@ -31,8 +31,33 @@ closeopenfile:
     move        a0, t6
     li          t7, file_id
     sb          zero, 0x0(t7)
-    b           checkfile
+    j           checkfile
     nop
+
+patch_file:
+    la          a0, path_end
+    li          a1, 0x50
+    sb          a1, 0x4(a0)
+    la          a0, path
+
+    jal         sceIoGetStat
+    move        a1, sp
+
+    slt         at, v0, zero
+    bne         at, zero, @@skip
+    nop
+
+    la          a0, do_patch
+    li          a1, 0x50
+    sb          a1, 0x0(a0)
+
+@@skip:
+    la          a0, path_end
+    sb          zero, 0x4(a0)
+
+    b           ret_seek
+    addiu       sp, sp, 0x60
+
 
 openfile:
     addiu       sp, sp, -0x60
@@ -41,8 +66,8 @@ openfile:
     move        a1, sp
 
     slt         at, v0, zero
-    bnel        at, zero, ret_seek
-    addiu       sp, sp, 0x60
+    bnel        at, zero, patch_file
+    nop
 
     lw          t7, 0x8(sp)
     li          t6, filesize
@@ -120,10 +145,44 @@ cryptoskip:
     j           0x08865428
     nop
 
+load_patch:
+    addiu       sp, sp, -0xC
+    sw          ra, 0x00(sp)
+    sw          a2, 0x04(sp)
+    sw          v0, 0x08(sp)
+
+    la          a0, path_end
+    li          a1, 0x50
+    sb          a1, 0x4(a0)
+    la          a0, path
+
+    jal         load_mods
+    nop
+
+    la          a0, path_end
+    sb          zero, 0x4(a0)
+    
+    lw          ra, 0x00(sp)
+    lw          a2, 0x04(sp)
+    lw          v0, 0x08(sp)
+    j           0x08865428
+    addiu       sp, sp, 0x8
+
 decrypter:
-    lui         ra, 0x0886
+    la          t3, do_patch
+    nop
+    lb          t4, 0x0(t3)
+    sb          zero, 0x0(t3)
+    beq         t4, zero, @@default
+    nop
+    la          ra, load_patch
+    b           @@decrypt
+    nop
+@@default:
+    la          ra, 0x08865428
+@@decrypt:
     j           0x08864bc8
-    addiu       ra, ra, 0x5428
+    addiu       ra, ra, 0x
 
     .align      2
 lastfile:
@@ -131,9 +190,11 @@ lastfile:
 path:
     .ascii      "ms0:/P3rdHDML/files/"
 path_end:
-    .ascii      "file"
+    .asciiz      "file"
     .byte       0
 file_id:
+    .byte       0
+do_patch:
     .byte       0
     .align
 filesize:
