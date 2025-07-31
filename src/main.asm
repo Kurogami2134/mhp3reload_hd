@@ -20,7 +20,7 @@ sceIoGetStat    equ         0x089656B8
 sceIoOpen       equ         0x089656D0
 sceIoSeek       equ         0x089656D8
 
-memcpy          equ         0x088EE470
+SIZE_LOAD_HOOK  equ         0x08864EE8
 
 
 .relativeinclude on
@@ -55,10 +55,10 @@ j               cryptoskip
 
 nop
 
-.word           0x088652A4; fix bugged sizes when loading non existent files
+.word           SIZE_LOAD_HOOK; fix bugged sizes when loading non existent files
 .word           0x8
 
-jal             fix_file_size
+j               fix_file_size
 nop
 
 .word           0x088655c0; seek hook
