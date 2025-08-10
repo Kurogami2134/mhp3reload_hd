@@ -50,6 +50,11 @@ j               read
 
 j               cryptoskip
 
+.word           0x08865518; skip size check
+.word           0x4
+
+nop
+
 .word           SIZE_LOAD_HOOK; fix bugged sizes when loading non existent files
 .word           0x8
 
