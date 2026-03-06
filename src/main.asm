@@ -22,6 +22,7 @@ sceIoSeek       equ         0x089656D8
 
 SIZE_LOAD_HOOK  equ         0x08864EE8
 
+ML_LOAD_ADD     equ         0x08800480
 
 .relativeinclude on
 
@@ -71,10 +72,17 @@ jal             seek
 
 .close
 
-.create         "../bin/ml", 0x08800480
+.create         "../bin/modloader.bin", ML_LOAD_ADD - 8
+.word ML_LOAD_ADD
+.word @modelloader_end - ML_LOAD_ADD
+
 
 .include        "modelloader.asm"
 
+@modelloader_end:
+
+.word -1
+.word 0
 .close
 
 .include        "mldebug.asm"

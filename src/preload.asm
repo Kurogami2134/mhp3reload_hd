@@ -1,8 +1,8 @@
 .area 0x28, 0x0
 @path:
-    .ascii      "ms0:/P3rdHDML/mods"
+    .ascii      "ms0:/P3RDHDML/MODS"
 @path_end:
-    .ascii      ".bin"
+    .ascii      ".BIN"
 .endarea
 
 preload:

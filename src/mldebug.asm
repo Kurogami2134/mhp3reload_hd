@@ -1,6 +1,6 @@
 .psp
 
-address	equ	0x08800850
+address	equ	0x08800880
 
 printf	equ	0x88ec51c
 hook	equ	0x88E881C

@@ -268,17 +268,17 @@ decrypter:
 
 
 size_path:
-    .ascii      "ms0:/P3rdHDML/files/"
+    .ascii      "ms0:/P3RDHDML/FILES/"
 size_path_end:
-    .asciiz      "file"
+    .asciiz      "FILE"
     .word       0
     .align      2
 lastfile:
     .halfword       0
 path:
-    .ascii      "ms0:/P3rdHDML/files/"
+    .ascii      "ms0:/P3RDHDML/FILES/"
 path_end:
-    .asciiz      "file"
+    .asciiz      "FILE"
     .word       0
 file_id:
     .byte       0
