@@ -67,6 +67,11 @@ nop
 
 jal             seek
 
+
+.word           0x088655A4; allow seek of contiguous files
+.word           4
+    nop
+
 .word           -1
 .word           0
 
